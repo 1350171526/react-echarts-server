@@ -8,25 +8,31 @@ const handleWebSocket =  (server) => {
   const wss = new WebSocket.Server({ port: 3002 })
 
   wss.on('connection', (ws) => {
+    let cityCode;
     ws.on('message', message => {
+      cityCode = +`${message}`
       console.log(`Received message => ${message}`)
     })
     setInterval(async ()=>{
-      const res = await getWeather()
+      const res = await getWeather(cityCode)
       ws.send(JSON.stringify(res))
-    },5000)
+    },20000)
   })
 };
 
-const getWeather = async () => {
-  const res = await axios.get('https://restapi.amap.com/v3/weather/weatherInfo', {
+const getWeather = async (cityCode) => {
+  try {
+    const res = await axios.get('https://restapi.amap.com/v3/weather/weatherInfo', {
     params: {
       key: 'acca7d00d4361354f0f92e5452443bd4', 
-      city: 410100, 
+      city: cityCode, 
       extensions: 'base' 
     }
-  })
-  return res.data.lives[0]
+    })
+    return res.data.lives[0]
+  }catch(error){
+    res.status(500).json({ error: 'An error occurred' });
+  }
 }
 
 module.exports = handleWebSocket;

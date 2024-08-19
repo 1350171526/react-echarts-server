@@ -4,13 +4,12 @@ const axios = require('axios')
 
 /* GET home page. */
 router.get('/baseWeather',async function(req, res, next) {
-const cityCodes = require('../public/citycodes')
   try {
-    const requests = cityCodes.map(cityCode =>
+    const requests = Object.values(req.query).map(cityCode =>
       axios.get('https://restapi.amap.com/v3/weather/weatherInfo', {
         params: {
           key: 'acca7d00d4361354f0f92e5452443bd4', 
-          city: cityCode, 
+          city: +cityCode, 
           extensions: 'base' 
         }
       })
@@ -25,13 +24,12 @@ const cityCodes = require('../public/citycodes')
 });
 
 router.get('/allWeather',async function(req, res, next) {
-  const cityCodes = require('../public/citycodes')
   try {
-    const requests = cityCodes.map(cityCode =>
+    const requests = Object.values(req.query).map(cityCode =>
       axios.get('https://restapi.amap.com/v3/weather/weatherInfo', {
         params: {
           key: 'acca7d00d4361354f0f92e5452443bd4', 
-          city: cityCode, 
+          city: +cityCode, 
           extensions: 'all' 
         }
       })
@@ -46,10 +44,11 @@ router.get('/allWeather',async function(req, res, next) {
 
 router.get('/oneBaseWeather',async function(req, res, next) {
   try {
+    
     const request = await axios.get('https://restapi.amap.com/v3/weather/weatherInfo', {
       params: {
         key: 'acca7d00d4361354f0f92e5452443bd4', 
-        city: '410100', 
+        city: +Object.values(req.query)[0], 
         extensions: 'base' 
       }
     })
